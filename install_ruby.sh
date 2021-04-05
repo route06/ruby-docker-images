@@ -48,10 +48,10 @@ if test -n "$RUBY_MASTER_COMMIT"; then
     git pull --rebase origin
   else
     rm -r /usr/src/ruby
-    git clone --shallow-since=$RUBY_MASTER_COMMIT https://github.com/ruby/ruby.git /usr/src/ruby
+    git clone --depth=1 --branch=ruby_3_0 https://github.com/ruby/ruby.git /usr/src/ruby
     cd /usr/src/ruby
   fi
-  git checkout $RUBY_MASTER_COMMIT
+  git checkout 551f123
 else
   if test -z "$RUBY_DOWNLOAD_URI"; then
     RUBY_DOWNLOAD_URI="https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR}/ruby-${RUBY_VERSION}.tar.xz"
