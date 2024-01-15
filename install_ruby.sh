@@ -86,6 +86,7 @@ fi
     --prefix=/usr/local \
     --disable-install-doc \
     --enable-shared \
+    ASFLAGS=-mbranch-protection=pac-ret \
     --enable-yjit
   )
 
