@@ -1,0 +1,44 @@
+# https://docs.github.com/ja/actions/publishing-packages/publishing-docker-images
+# https://docs.docker.com/build/ci/github-actions/multi-platform/
+name: Create and publish a Docker image
+
+on:
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: route06/ruby:3.3.0-jammy
+
+jobs:
+  build-and-push-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # v3.0.0
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 # v3.0.0
+      - name: Log in to the Container registry
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # v3.0.0
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: mkdir -p tmp/ruby
+        run: |
+          mkdir -p tmp/ruby
+      - name: Build and push
+        uses: docker/build-push-action@4a13e500e55cf31b7a5d59a38ab2040ab0f42f56 # v5.1.0
+        with:
+          build-args: |
+            BASE_IMAGE_TAG=jammy
+            RUBY_VERSION=3.3.0
+          context: .
+          platforms: linux/arm64
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          target: ruby
